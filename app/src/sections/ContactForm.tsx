@@ -84,26 +84,26 @@ export default function ContactForm({ isOpen, onClose }: ContactFormProps) {
     setStatus('idle');
 
     try {
-      const data = new FormData();
-      data.append('name', formData.name);
-      data.append('email', formData.email);
-      data.append('phone', formData.phone);
-      data.append('subject', formData.subject);
-      data.append('message', formData.message);
-
-      // Use relative path — works when frontend + PHP are on same domain
-      const response = await fetch('/contact.php', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        body: data,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
+      let result;
+      try {
+        result = await response.json();
+      } catch {
+        result = { success: false, message: 'Something went wrong. Please try again later.' };
+      }
+
+      if (response.ok && result.success) {
         setStatus('success');
-        setStatusMessage('Message sent! We\'ll get back to you shortly.');
+        setStatusMessage(result.message || "Message sent! We'll get back to you shortly.");
         setFormData({ name: '', email: '', phone: '', subject: 'Sales Inquiry', message: '' });
       } else {
         setStatus('error');
-        setStatusMessage('Something went wrong. Please try again later.');
+        setStatusMessage(result.message || 'Something went wrong. Please try again later.');
       }
     } catch {
       setStatus('error');
