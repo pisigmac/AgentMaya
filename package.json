@@ -1,0 +1,13 @@
+{
+  "name": "agentmaya-root",
+  "private": true,
+  "workspaces": [
+    "app"
+  ],
+  "scripts": {
+    "build": "npm run build --prefix app"
+  },
+  "overrides": {
+    "brace-expansion": "5.0.8"
+  }
+}
